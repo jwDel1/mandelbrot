@@ -127,42 +127,30 @@ placeNone:
     j rlIterate 
 
 printMandel: 
-    li a0, 1        # 1 is syscall for stdout 
-    la a1, gradient # load address of memory
-    li a2, 1        # message length
-    li a7, 64       # syscall code for write  
-
-    ecall
-
-    blt  t5, 81, printMandel 
-    li t5, 0
-    li t6, 0
-    la a1, newLine 
-    ecall
-    li a2, 2  
-    addi t6, t6, 1  
-    blt t6, 41, printMandel 
-
-    li a0, 0        # Return code 0
-    li a7, 93       # syscall for exit
-    ecall           # exit program
-
-
+      
     li a7, 4        # 4 is syscall for print in RARS
     li a0, t4 
 
     ecall
 
     addi t4, t4, 1 
-    addi t5, t6, 1
+    addi t5, t5, 1
 
-    blt t6, 81, printMandel
+    blq t6, 81, printMandel
 
     li t5, 0
     li a7, 4
     li a0, newLine
 
     ecall
+    
+    addi t6, t6, 1 
+
+    blq t6, 41, printMandel
+   
+    li a7, 93 
+    ecall
+
     .data	
 
       .align 1 # Alligns data to multiples of half-word
