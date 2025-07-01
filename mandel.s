@@ -7,52 +7,64 @@ _start:
   li t0, 0
   li t3, 0
   li t4, 0
-  la a3, one 
-  fld f6, 0(a3) 
+  la x1, one 
+  fld f6, 0(x1) 
   la a3, negtwo
-  fld f7, 0(a3)
+  fld f7, 0(x1)
 
 iterateMan:	
 
   li t0, 0 
   li t2, 0 
-  la a3, zip
-  fld f0, 0(a3) 
-	fld f1, 0(a3)     # Initializes all values to 0 in Loop
-	fld f2, 0(a3) 	
-	fld f3, 0(a3) 
-	fld f4, 0(a3) 
+  la x1, zip
+  fld f0, 0(x1) 
+	fld f1, 0(x1)     # Initializes all values to 0 in Loop
+	fld f2, 0(x1) 	
+	fld f3, 0(x1) 
+	fld f4, 0(x1) 
+
 	j outputLoop
 	
 imIterate: 
 
-    la a3, negtwo
-    fld f7, 0(a3)
-    la a3, imIncr
-    fld f8, 0(a3) 
+    la x1, negtwo
+    fld f7, 0(x1)
+    la x1, imIncr
+    fld f8, 0(x1) 
     fadd.d f6, f6, f8
+
     j iterateMan 
 
  rlIterate: 
 
-    la a3, rlIncr
-    fld f8, 0(a3) 
+    la x1, rlIncr
+    fld f8, 0(x1) 
     fadd.d f7, f7, f8
     
     # check if the im value is even negative one yet, if not just go back to iterating 
 
-    la a3, two 
-    fld f8, 0(a3)
-    flt.s a3, f8, f7 
-    la a4, negone
-    fld f8, 0(a4)
-    feq.s a4, f6, f8
-    li a5, 1
-    bne a4, a5, iterateMan
-    la t4, gradient
-    li t5, 0
+    la x1, two 
+    fld f8, 0(x1)
+
+    flt.s x1, f8, f7 
+
+    la x2, negone
+    fld f8, 0(x2)
+
+    feq.s x2, f6, f8
+
+    li x3, 1
+
+    bne x2, x3, iterateMan
+
+    la x1, gradient
+    li x2, 0
+    li x3, 81
+    li x4, 41 
     beq a4, a3, printMandel 
-    li t6, x0
+
+    mv t6, x0 
+
     j iterateMan
 outputLoop:
     la a3, zip
@@ -108,8 +120,11 @@ placeStar:
     addi t4, t4, 1
     la a3, negtwo 
     fld f8, 0(a3) 
+
     feq.s a3, f0, f8 
+
     bne a3, x0, imIterate 
+
     j rlIterate
 
 placeNone:
@@ -122,31 +137,34 @@ placeNone:
     addi t4, t4, 1
     la a3, negtwo 
     fld f8, 0(a3) 
+
     feq.s a3, f0, f8 
+
     bne a3, x0, imIterate 
+
     j rlIterate 
 
 printMandel: 
       
     li a7, 4        # 4 is syscall for print in RARS
-    li a0, t4 
+    mv a0, x1 
 
     ecall
 
-    addi t4, t4, 1 
-    addi t5, t5, 1
+    addi x1, x1, 1 
+    addi x2, x2, 1
 
-    blq t6, 81, printMandel
+    ble t6, x3, printMandel
 
-    li t5, 0
+    li x2, 0
     li a7, 4
-    li a0, newLine
+    mv a0, newLine 
 
     ecall
     
-    addi t6, t6, 1 
-
-    blq t6, 41, printMandel
+    addi x2, x2, 1 
+    
+    ble x2, x4, printMandel
    
     li a7, 93 
     ecall
