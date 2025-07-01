@@ -158,7 +158,7 @@ printMandel:
 
     li x2, 0
     li a7, 4
-    mv a0, newLine 
+    la a0, newLine 
 
     ecall
     
