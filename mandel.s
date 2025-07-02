@@ -2,7 +2,17 @@
 .global _start
 
 _start:
-  
+
+  li a0, 1
+  li a7, 1
+  ecall
+  la a0, blank 
+  li a7, 4
+  ecall 
+  li a0, 1
+  li a7, 1
+  ecall
+
   la t1, gradient    # load the base address of buffer 
   li t0, 0
   li t3, 0
@@ -13,7 +23,7 @@ _start:
   fld f7, 0(x1)
 
 iterateMan:	
-
+ 
   li t0, 0 
   li t2, 0 
   la x1, zip
@@ -68,15 +78,19 @@ imIterate:
     j iterateMan
 outputLoop:
     la a3, zip
-    fld f8, 0(a3)    
     fld f2, 0(a3) 
-    fld f3, 0(a3) 
-    fld f4, 0(a3) 
-    la a3, two
-    fld f8, 0(a3) 
-    fge.d a3, f4, f8 
-    bne a3, x0, placeNone
+    fld f3, 0(a3)  
+    la a3, two              # load the memory address for our 2.0 constant into register a3 
+    fld f8, 0(a3)           # load from memory address of the 2.0 constant into register 
+
+    fge.d a3, f4, f8        # float compare ~ f4 >= f8 ~ stores bool in a3
+                            # comparing magnitude of z to 2, and if it exceeds
+                            # it will (likely) diverge
+
+    bne a3, x0, placeNone   # if  a3 != 0 -> branch placeNone  
+
     li a3, 20 
+
     bgt t0, a3, placeStar 
 	
     # (f0 + f1)(f0 + f1) = f1^2 + 2(f1)(f0) + f0^2
@@ -145,10 +159,10 @@ placeNone:
     j rlIterate 
 
 printMandel: 
-      
+
     li a7, 4        # 4 is syscall for print in RARS
     mv a0, x1 
-
+ 
     ecall
 
     addi x1, x1, 1 
