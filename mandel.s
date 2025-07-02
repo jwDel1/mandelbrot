@@ -44,29 +44,36 @@ imIterate:
     # check if the im value is even negative one yet, if not just go back to iterating 
 
     la x1, two 
-    fld f8, 0(x1)
+    fld f8, 0(x1)             # load 2.0 into f8
 
-    flt.s x1, f8, f7 
+    feq.s x1, f7, f8          # compare the current z_Rl to 2.0 to see if it is equal to 2.0
+                              # store the bool result in x1
 
-    la x2, negone
-    fld f8, 0(x2)
+    la x2, negone              
+    fld f8, 0(x2)             # load -1.0 into f8
 
-    feq.s x2, f6, f8
+    feq.s x2, f6, f8          # check if z_Im is equal to -1.0 and store the bool in x2
 
-    li x3, 1
+    li x3, 1                    
 
-    bne x2, x3, iterateMan
+    bne x2, x3, iterateMan    # check if x2 != 1 which would imply that we need to iterate more
+                              # leading to a branch if they are not equal (x2 can only be 1 or 0)
 
-    la x1, gradient
-    li x2, 0
-    li x3, 81
-    li x4, 41 
-    beq a4, a3, printMandel 
+    la x3, gradient
+    li x4, 0
+    li x6, 81
+    li x7, 41 
+
+    beq x2, x1, printMandel   # If both conditions comparisons stored in x1 and x2 are true (1) 
+                              # it is time to print since we have iterated from the 
+                              # top left (-2 + (1)i) to bottom right (2 - (1)i) 
 
     mv t6, x0 
 
     j iterateMan
+
 outputLoop:
+
     la a3, zip
     fld f2, 0(a3) 
     fld f3, 0(a3)  
@@ -76,6 +83,9 @@ outputLoop:
     fge.d a3, f4, f8        # float compare ~ f4 >= f8 ~ stores bool in a3
                             # comparing magnitude of z to 2, and if it exceeds
                             # it will (likely) diverge
+   
+    la a3, zip              
+    fld f4, 0(a3)           # reset our magnitude value (f4) for the next iteration  
 
     bne a3, x0, placeNone   # if  a3 != 0 -> branch placeNone  
 
@@ -152,24 +162,23 @@ placeNone:
 printMandel: 
 
     li a7, 4        # 4 is syscall for print in RARS
-    mv a0, x1 
+    mv a0, x3 
  
     ecall
 
-    addi x1, x1, 1 
-    addi x2, x2, 1
+    addi x3, x3, 1 
+    
+    ble x5, x6, printMandel     # checks to see if we are at 81 iterations and if not repeat the loop
 
-    ble t6, x3, printMandel
-
-    li x2, 0
+    li x6, 0
     li a7, 4
     la a0, newLine 
 
     ecall
     
-    addi x2, x2, 1 
+    addi x7, x7, 1 
     
-    ble x2, x4, printMandel
+    ble x7, x8, printMandel
    
     li a7, 93 
     ecall
