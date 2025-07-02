@@ -3,16 +3,6 @@
 
 _start:
 
-  li a0, 1
-  li a7, 1
-  ecall
-  la a0, blank 
-  li a7, 4
-  ecall 
-  li a0, 1
-  li a7, 1
-  ecall
-
   la t1, gradient    # load the base address of buffer 
   li t0, 0
   li t3, 0
@@ -89,10 +79,11 @@ outputLoop:
 
     bne a3, x0, placeNone   # if  a3 != 0 -> branch placeNone  
 
-    li a3, 20 
+    li a3, 20               # max iteration cnt before assuming convergence 
+                            # can change later for accuracy
 
-    bgt t0, a3, placeStar 
-	
+    bgt t0, a3, placeStar   # check if iteration cnt exceeds max iterations 
+                            	
     # (f0 + f1)(f0 + f1) = f1^2 + 2(f1)(f0) + f0^2
     # STEP 2: calculating the z^2
 
