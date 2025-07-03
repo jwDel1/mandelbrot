@@ -1,3 +1,16 @@
+
+
+
+
+
+
+
+# NOTE: THIS IS V1 AND IS INCOMPLETE PLEASE SEE V2 FOR THE UPDATED VERSION
+
+
+
+
+
 .text
 .global _start
 
