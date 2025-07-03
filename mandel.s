@@ -32,6 +32,12 @@ imIterate:
     la x1, imIncr
     fld f8, 0(x1) 
     fadd.d f6, f6, f8
+     
+    la x1, two 
+    fld f8, 0(x1)             # load 2.0 into f8
+
+    feq.s x1, f7, f8          # compare the current z_Rl to 2.0 to see if it is equal to 2.0
+                              # store the bool result in x1
 
     j iterateMan 
 
@@ -42,33 +48,6 @@ imIterate:
     fadd.d f7, f7, f8
     
     # check if the im value is even negative one yet, if not just go back to iterating 
-
-    la x1, two 
-    fld f8, 0(x1)             # load 2.0 into f8
-
-    feq.s x1, f7, f8          # compare the current z_Rl to 2.0 to see if it is equal to 2.0
-                              # store the bool result in x1
-
-    la x2, negone              
-    fld f8, 0(x2)             # load -1.0 into f8
-
-    feq.s x2, f6, f8          # check if z_Im is equal to -1.0 and store the bool in x2
-
-    li x3, 1                    
-
-    bne x2, x3, iterateMan    # check if x2 != 1 which would imply that we need to iterate more
-                              # leading to a branch if they are not equal (x2 can only be 1 or 0)
-
-    la x3, gradient
-    li x4, 0
-    li x6, 81
-    li x7, 41 
-
-    beq x2, x1, printMandel   # If both conditions comparisons stored in x1 and x2 are true (1) 
-                              # it is time to print since we have iterated from the 
-                              # top left (-2 + (1)i) to bottom right (2 - (1)i) 
-
-    mv t6, x0 
 
     j iterateMan
 
@@ -127,6 +106,10 @@ outputLoop:
 	
 placeStar:
 
+    li x1, 3321
+
+    beq t4, x1, printMandel     
+ 
     la a3, star
     lb t2, 0(a3) 
     add t3, t1, t4 
@@ -143,10 +126,14 @@ placeStar:
     j rlIterate
 
 placeNone:
-     
+
+    li x1, 3321
+
+    beq t4, x1, printMandel    
+
     la a3, blank
     lb t2, 0(a3) 
-    add t3, t1, t4
+    add t3, t1, t4 
     sb t2, 0(t3)    
     mv t0, x0
     addi t4, t4, 1
