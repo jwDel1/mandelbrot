@@ -8,9 +8,10 @@
 
 _start:
 
-li s0, 0                  # cntr for rL axis 
-li s1, 0                  # cntr for Im axis 
-li s2, 0                  # cntr for z iterations in math segment 
+mv s0, x0                 # cntr for rL axis 
+mv s1, x0                 # cntr for Im axis 
+mv s2, x0                 # cntr for z iterations in math segment 
+mv x1, x0                 # initialize x1 
 
 la s3, buffer             #  
 
@@ -75,7 +76,7 @@ li x1, s2               # load our buffer address into x1
 add x1, s2, s0          # add the Rl value counter to our buffer address serving as an offset
 lb star, 0(x1)          # store a star in register address s2 + s0 or s2 + 1n 
 
-li x1, x0               #  
+mv x1, x0               #  
 
 li x1, WIDTH            #
 beq s0, x1, printRow    # Check if s0 is at 81
@@ -90,7 +91,12 @@ li x1, s2               # load our buffer address into x1
 add x1, s2, s0          # add the Rl value counter to our buffer address serving as an offset
 lb empty, 0(x1)          # store a star in register address s2 + s0 or s2 + 1n 
 
-li x1, x0               #  
+mv x1, x0               #  
+
+li x1, WIDTH            #
+
+la x1, s2               #
+mv x2, x0               #
 
 li x1, WIDTH            #
 beq s0, x1, printRow    # Check if s0 is at 81
@@ -101,15 +107,37 @@ j nextRl                # jump to our increment
 
 nextRl:
 
+la increment, x1
+fld f31, 0(x1)
+fadd.d fs0, fs0, f31
 
+j math
 
 printRow:
 
+la x1, s2               # load buffer address into x1 
 
+li a7, 4                # syscall for print
+mv a0, x1               # mem address for buffer into a0 
+
+ecall                   #  
+
+
+addi x2, x2, 1          #
+add x1, x2              #
+
+li x1, WIDTH            #
+
+beq x2, x1, nextRow     #
+
+j printRow              #
 
 nextRow:
 
-
+# reset rl value counter
+# decrement fs1
+# reset fs0 to minRl
+# increment s1 Im counter
 
 exit:
 
@@ -121,8 +149,8 @@ exit:
 
     buffer:
 
-      .eqv WIDTH, 81
-      .eqv HEIGHT, 41 
+      .eqv WIDTH, 80      # tech 81 but iteration counter starts at 0
+      .eqv HEIGHT, 40     # tech 41 but iteration counter starts at 0
       .space WIDTH 
     
     minRl: .double -2.0
