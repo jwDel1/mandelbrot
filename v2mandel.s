@@ -1,6 +1,6 @@
 
 
-
+# CURRENT VERSION
 
 
 .text
@@ -134,10 +134,19 @@ printRow:
 
 nextRow:
 
-# reset rl value counter
-# decrement fs1
-# reset fs0 to minRl
-# increment s1 Im counter
+  li s0, 0                # reset rl value counter
+
+  la x1, decrement        #
+  fld f31, 0(x1)          #
+  fadd.d fs1, fs1, f31    # decrement fs1
+
+  la x1, minRl            # reset fs0 to minRl
+  fld f31, 0(x1)          #
+  mv fs0, f31
+
+  addi s1, s1, 1          # increment s1 Im counter
+
+  j math                  #
 
 exit:
 
