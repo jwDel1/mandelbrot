@@ -72,8 +72,7 @@ math:
   j math                    # If no branch repeat
 
 storeStar:
-
-  li x1, s2               # load our buffer address into x1 
+ 
   add x1, s2, s0          # add the Rl value counter to our buffer address serving as an offset
   lb star, 0(x1)          # store a star in register address s2 + s0 or s2 + 1n 
 
@@ -87,8 +86,7 @@ storeStar:
   j nextRl                # jump to our increment 
 
 storeBlank:
-
-  li x1, s2               # load our buffer address into x1 
+  
   add x1, s2, s0          # add the Rl value counter to our buffer address serving as an offset
   lb empty, 0(x1)         # store a star in register address s2 + s0 or s2 + 1n 
 
