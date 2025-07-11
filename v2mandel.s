@@ -133,6 +133,9 @@ printRow:
   j printRow              #
 
 nextRow:
+  
+  li x1, HEIGHT           #
+  beq s1, x1, exit        # compare if number of rows is at max and then branch to program exit if so 
 
   li s0, 0                # reset rl value counter
 
@@ -143,15 +146,20 @@ nextRow:
   la x1, minRl            # reset fs0 to minRl
   fld f31, 0(x1)          #
   mv fs0, f31
-
+ 
   addi s1, s1, 1          # increment s1 Im counter
+
+  li a7, 4                # 4 syscall for print string
+  la a0, newLine          # 
+  ecall                   # switch to newline for next print
 
   j math                  #
 
 exit:
 
+  li a7, 93
+  ecall
  
-
 .data
   
   .align 1
@@ -180,7 +188,7 @@ exit:
 
     empty: .string " "
 
-
+    newLine: .string "\n"
 
 
 
