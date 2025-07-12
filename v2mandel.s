@@ -90,7 +90,7 @@ storeStar:
 storeBlank:
   
   add x1, s3, s0          # add the Rl value counter to our buffer address serving as an offset
-  la x2, empty             #
+  la x2, empty            #
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
   mv x2, x0               #
@@ -114,8 +114,8 @@ printRow:
 
   mv x1, s3               # load buffer address into x1 
 
-  li a7, 4                # syscall for print
-  mv a0, x1               # mem address for buffer into a0 
+  li a7, 11               # syscall for print
+  lb a0, 0(x1)            # mem address for buffer into a0 
 
   ecall                   #  
 
@@ -175,9 +175,9 @@ exit:
 
     two: .double 2.0     
 
-    star: .string "*"
+    star: .byte 42 
 
-    empty: .string " "
+    empty: .byte 32 
 
     newLine: .string "\n"
 
