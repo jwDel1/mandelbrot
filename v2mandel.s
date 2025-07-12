@@ -112,7 +112,7 @@ nextRl:
 
 printRow:
 
-  li x1, s3               # load buffer address into x1 
+  mv x1, s3               # load buffer address into x1 
 
   li a7, 4                # syscall for print
   mv a0, x1               # mem address for buffer into a0 
