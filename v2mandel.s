@@ -66,7 +66,7 @@ math:
 
   li x1, 19                 # load 19 into x1 to compare to z counter
 
-  beq s2, x1, placeStar     # branch to inclusion in set if max iterations are reached 
+  beq s2, x1, storeStar     # branch to inclusion in set if max iterations are reached 
 
   addi s2, s2, 1            # Increment the count of z iterations
 
@@ -74,13 +74,13 @@ math:
 
 storeStar:
  
-  add x1, s2, s0          # add the Rl value counter to our buffer address serving as an offset
+  add x1, s3, s0          # add the Rl value counter to our buffer address serving as an offset
   la x2, star             #
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
   mv x1, x0               #  
 
-  li x1, WIDTH            # 
+  li x1, 80               # 
   beq s0, x1, printRow    # Check if s0 is at 81
 
   addi s0, s0, 1          # Increment Rl value counter
@@ -89,18 +89,13 @@ storeStar:
 
 storeBlank:
   
-  add x1, s2, s0          # add the Rl value counter to our buffer address serving as an offset
-  la x2, empty            #
+  add x1, s3, s0          # add the Rl value counter to our buffer address serving as an offset
+  la x2, empty             #
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
-  mv x1, x0               #  
-
-  li x1, WIDTH            #
-
-  la x1, s2               #
   mv x2, x0               #
 
-  li x1, WIDTH            #
+  li x1, 80               #
   beq s0, x1, printRow    # Check if s0 is at 81
 
   addi s0, s0, 1          # Increment Rl value counter
@@ -117,7 +112,7 @@ nextRl:
 
 printRow:
 
-  la x1, s2               # load buffer address into x1 
+  la x1, s3               # load buffer address into x1 
 
   li a7, 4                # syscall for print
   mv a0, x1               # mem address for buffer into a0 
@@ -165,11 +160,12 @@ exit:
   
   .align 1
 
+  .eqv WIDTH 80      # tech 81 but iteration counter starts at 0
+  .eqv HEIGHT 40     # tech 41 but iteration counter starts at 0
+ 
     buffer:
 
-      .eqv WIDTH 80      # tech 81 but iteration counter starts at 0
-      .eqv HEIGHT 40     # tech 41 but iteration counter starts at 0
-      .space WIDTH 
+      .space 81 
     
     minRl: .double -2.0
 
