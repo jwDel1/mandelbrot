@@ -104,7 +104,7 @@ storeBlank:
 
 nextRl:
 
-  la increment, x1        #
+  la x1, increment        #
   fld f31, 0(x1)          #
   fadd.d fs0, fs0, f31    #
 
@@ -112,7 +112,7 @@ nextRl:
 
 printRow:
 
-  la x1, s3               # load buffer address into x1 
+  li x1, s3               # load buffer address into x1 
 
   li a7, 4                # syscall for print
   mv a0, x1               # mem address for buffer into a0 
@@ -120,9 +120,9 @@ printRow:
   ecall                   #  
 
   addi x2, x2, 1          #
-  add x1, x2              #
+  add x1, x1, x2          #
 
-  li x1, WIDTH            #
+  li x1, 80               #
 
   beq x2, x1, nextRow     #
 
@@ -130,7 +130,7 @@ printRow:
 
 nextRow:
   
-  li x1, HEIGHT           #
+  li x1, 40               #
   beq s1, x1, exit        # compare if number of rows is at max and then branch to program exit if so 
 
   li s0, 0                # reset rl value counter
@@ -140,8 +140,7 @@ nextRow:
   fadd.d fs1, fs1, f31    # decrement fs1
 
   la x1, minRl            # reset fs0 to minRl
-  fld f31, 0(x1)          #
-  mv fs0, f31
+  fld fs0, 0(x1)          # 
  
   addi s1, s1, 1          # increment s1 Im counter
 
@@ -159,9 +158,6 @@ exit:
 .data
   
   .align 1
-
-  .eqv WIDTH 80      # tech 81 but iteration counter starts at 0
-  .eqv HEIGHT 40     # tech 41 but iteration counter starts at 0
  
     buffer:
 
