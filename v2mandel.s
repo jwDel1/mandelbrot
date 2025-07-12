@@ -165,8 +165,6 @@ exit:
     
     minRl: .double -2.0
 
-    minIm: .double -1.0 
-
     decrement: .double -0.05
 
     zip: .double 0.0              # Big shoutout to Paul G. Hewitt
@@ -175,7 +173,7 @@ exit:
 
     maxIm: .double 1.0
 
-    maxRl: .double 2.0     
+    two: .double 2.0     
 
     star: .string "*"
 
