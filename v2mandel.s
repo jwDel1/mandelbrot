@@ -28,10 +28,7 @@ _start:
   la x1, increment          #
   fld fs4, 0(x1)            #
 
-  la x1, decrement          #
-  fld fs5, 0(x1)            #
-
-math: 
+  math: 
 
   la x1, zip                #
   fld f2, 0(x1)             # Initialize temp registers to 0 
@@ -80,10 +77,13 @@ storeStar:
   la x2, star             #
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
-  mv x1, x0               #  
+  mv x2, x0               # 
+  mv x3, s3               # load buffer address into x3 for the printing row loop  
 
   li x1, 80               # 
   beq s0, x1, printRow    # Check if s0 is at 81
+
+  mv x3, x0               # free x3 since we aren't branching yet
 
   addi s0, s0, 1          # Increment Rl value counter
 
@@ -95,51 +95,53 @@ storeBlank:
   la x2, empty            #
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
-  mv x2, x0               #
-
+  mv x2, x0               #  
+  mv x3, s3               # load buffer address into x3 for the printing row loop 
+ 
   li x1, 80               #
   beq s0, x1, printRow    # Check if s0 is at 81
+  
+  mv x3, x0               # free x3 since we aren't branching yet
 
   addi s0, s0, 1          # Increment Rl value counter
 
   j nextRl                # jump to our increment 
 
 nextRl:
+    
+  fadd.d fs0, fs0, fs4    #
 
-  la x1, increment        #
-  fld f31, 0(x1)          #
-  fadd.d fs0, fs0, f31    #
+  la x1, zip              #
+  fld f0, 0(x1)           # making sure to clear registers used in math subroutine
+  fld f1, 0(x1)           #
 
   j math                  #
 
 printRow:
 
-  mv x1, s3               # load buffer address into x1 
-
   li a7, 11               # syscall for print
-  lb a0, 0(x1)            # mem address for buffer into a0 
+  lb a0, 0(x3)            # mem address for buffer into a0 
 
   ecall                   #  
 
   addi x2, x2, 1          #
-  add x1, x1, x2          #
+  add x3, x3, x2          #
 
   li x1, 80               #
-
   beq x2, x1, nextRow     #
 
   j printRow              #
 
 nextRow:
-  
+    
   li x1, 40               #
   beq s1, x1, exit        # compare if number of rows is at max and then branch to program exit if so 
 
   li s0, 0                # reset rl value counter
 
-  la x1, decrement        #
+  la x1, increment        #
   fld f31, 0(x1)          #
-  fadd.d fs1, fs1, f31    # decrement fs1
+  fsub.d fs1, fs1, f31    # decrement fs1
 
   la x1, minRl            # reset fs0 to minRl
   fld fs0, 0(x1)          # 
@@ -149,6 +151,10 @@ nextRow:
   li a7, 4                # 4 syscall for print string
   la a0, newLine          # 
   ecall                   # switch to newline for next print
+
+  la x1, zip              #
+  fld f0, 0(x1)           # making sure to clear registers used in math subroutine
+  fld f1, 0(x1)           #
 
   j math                  #
 
@@ -165,9 +171,7 @@ exit:
 
       .space 81 
     
-    minRl: .double -2.0
-
-    decrement: .double -0.05
+    minRl: .double -2.0 
 
     zip: .double 0.0              # Big shoutout to Paul G. Hewitt
 
