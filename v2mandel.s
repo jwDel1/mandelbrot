@@ -75,12 +75,13 @@ storeStar:
  
   add x1, s3, s0          # add the Rl value counter to our buffer address serving as an offset
   la x2, star             #
+  lb x2, 0(x2)            #
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
   mv x2, x0               # 
   mv x3, s3               # load buffer address into x3 for the printing row loop  
 
-  li x1, 80               # 
+  li x1, 81               # 
   beq s0, x1, printRow    # Check if s0 is at 81
 
   mv x3, x0               # free x3 since we aren't branching yet
@@ -93,12 +94,13 @@ storeBlank:
   
   add x1, s3, s0          # add the Rl value counter to our buffer address serving as an offset
   la x2, empty            #
+  lb x2, 0(x2)            # 
   sb x2, 0(x1)            # store a star in register address s2 + s0 or s2 + 1n 
 
-  mv x2, x0               #  
-  mv x3, s3               # load buffer address into x3 for the printing row loop 
+  mv s5, x0               #  
+  mv s4, s3               # load buffer address into x3 for the printing row loop 
  
-  li x1, 80               #
+  li x1, 81               #
   beq s0, x1, printRow    # Check if s0 is at 81
   
   mv x3, x0               # free x3 since we aren't branching yet
@@ -115,29 +117,31 @@ nextRl:
   fld f0, 0(x1)           # making sure to clear registers used in math subroutine
   fld f1, 0(x1)           #
 
+  mv s2, x0               # clear the z iteration counter 
+    
   j math                  #
 
 printRow:
 
   li a7, 11               # syscall for print
-  lb a0, 0(x3)            # mem address for buffer into a0 
+  lb a0, 0(s4)            # mem address for buffer into a0 
 
   ecall                   #  
 
-  addi x2, x2, 1          #
-  add x3, x3, x2          #
+  addi s5, s5, 1          #
+  addi s4, s4, 1          #
 
-  li x1, 80               #
-  beq x2, x1, nextRow     #
+  li x1, 81               #
+  beq s5, x1, nextRow     #
 
   j printRow              #
 
 nextRow:
     
-  li x1, 40               #
+  li x1, 41               #
   beq s1, x1, exit        # compare if number of rows is at max and then branch to program exit if so 
 
-  li s0, 0                # reset rl value counter
+  mv s0, x0               # reset rl value counter
 
   la x1, increment        #
   fld f31, 0(x1)          #
@@ -155,6 +159,8 @@ nextRow:
   la x1, zip              #
   fld f0, 0(x1)           # making sure to clear registers used in math subroutine
   fld f1, 0(x1)           #
+  
+  mv s2, x0               # reset iteration counter
 
   j math                  #
 
