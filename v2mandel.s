@@ -37,15 +37,17 @@ math:
   fld f2, 0(x1)             # Initialize temp registers to 0 
   fld f3, 0(x1)             #
 
-  fmul.d f2, f0, f1         # 
+  fmul.d f2, f0, f1         # Store the a*bi term in f2 
   la x1, two                # 
   fld f31, 0(x1)            #
-  fmul.d f2, f2, f31        # store the middle term in a+bi binomial expansion (2(a)(bi))
+  fmul.d f2, f2, f31        #
 
-  fmul.d f1, f1, f1         # square the bi term in binomial expansion
-  fadd.d f1, f1, f3         # add the squared term to our middle term -> register f1 for new bi term
+  fmul.d f0, f0, f0         #
+  fmul.d f1, f1, f1         #
 
-  fmul.d f0, f0, f0         # square our real term in binomial expansion
+  fsub.d f0, f0, f1         #
+  
+  fmv.d f1, f2
 
   fadd.d f0, f0, fs0        # add the real part of c to our real part of z 
   fadd.d f1, f1, fs1        # add the Im part of c to Im part of z
